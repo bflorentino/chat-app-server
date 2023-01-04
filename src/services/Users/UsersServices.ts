@@ -1,5 +1,5 @@
 import { ServerRes, User  } from "../../types/interfaces";
-import IUsers from "./IUserServices";
+import IUserServices from "./IUserServices";
 import PasswordUtilities from "../../tools/PasswordUtilities";
 import TokenUtilities from "../../tools/TokenUtilities";
 import connectToDb from "../../database/connection";
@@ -8,14 +8,14 @@ import DefaultResponse from '../../constants/index'
 import UserModel from "../../models/User";
 import ServerResponse from "../ServerRes";
 
-class UsersService implements IUsers {
+class UsersService implements IUserServices {
 
     private readonly _tokenUtility:TokenUtilities
     private readonly _passwordUtility:PasswordUtilities
 
-    constructor(){
-        this._tokenUtility = new TokenUtilities()
-        this._passwordUtility = new PasswordUtilities()
+    constructor(psUtility:PasswordUtilities, tokenUtility:TokenUtilities){
+        this._tokenUtility = tokenUtility
+        this._passwordUtility = psUtility
     }
 
    public async registerUser(user: User):Promise<ServerRes> {

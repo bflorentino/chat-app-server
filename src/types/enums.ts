@@ -6,8 +6,8 @@ export const enum HttpStatus {OK = 200,
                               SERVER_ERROR = 500
                             }
 
-export const enum SocketEvents { connected= "connected",
-                                disconnected = "disconnected",
+export const enum SocketEvents { connect= "connect",
+                                disconnect = "disconnect",
                                 sendMessage = "sendMessage",
                                 messageReceived = "messageReceived",
                                 updateMessage = "updateMessage",
