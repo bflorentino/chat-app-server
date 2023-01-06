@@ -8,7 +8,7 @@ export interface User {
     email: string,
     password: string,
     phone? : string,
-    last_active:string
+    last_active?:string
 }
 
 export interface Message{

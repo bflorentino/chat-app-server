@@ -30,7 +30,6 @@ const UserSchema = new Schema<User>({
     },
     last_active: {
         type: String,
-        required: true
     },
     phone: {
         type: String

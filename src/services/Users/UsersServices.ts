@@ -7,16 +7,11 @@ import { HttpStatus } from "../../types/enums";
 import DefaultResponse from '../../constants/index'
 import UserModel from "../../models/User";
 import ServerResponse from "../ServerRes";
+import moment from 'moment'
 
 class UsersService implements IUserServices {
 
-    private readonly _tokenUtility:TokenUtilities
-    private readonly _passwordUtility:PasswordUtilities
-
-    constructor(psUtility:PasswordUtilities, tokenUtility:TokenUtilities){
-        this._tokenUtility = tokenUtility
-        this._passwordUtility = psUtility
-    }
+   constructor(private passwordUtility:PasswordUtilities, private tokenUtility:TokenUtilities){}
 
    public async registerUser(user: User):Promise<ServerRes> {
 
@@ -26,14 +21,15 @@ class UsersService implements IUserServices {
             await connectToDb()
 
             const userToAdd = {...user }
-            userToAdd.password = await this._passwordUtility.encriptPassword(user.password)
+            userToAdd.password = await this.passwordUtility.encriptPassword(user.password)
+            userToAdd.last_active = moment().format('MMMM Do YYYY, h:mm:ss a')
 
             const model = new UserModel(userToAdd)
             model._id = user.email
 
             await model.save()
 
-            const token = this._tokenUtility.getToken(user.user_name)
+            const token = this.tokenUtility.getToken(user.user_name)
 
             response = new ServerResponse()
             
@@ -45,11 +41,16 @@ class UsersService implements IUserServices {
                             email:user.email, 
                             token
                         }
-                
         }
-        catch(e){
-            console.log(e)
-            response = new ServerResponse(DefaultResponse.Server_Error)
+        catch(e : unknown) {
+
+            if(e instanceof Error && e.message.startsWith("E11000")){
+                response = new ServerResponse(DefaultResponse.Server_Bad_Request)
+                response.message = "Probably this user name is already taken or an account with this email already exists"
+            }
+            else{
+                response = new ServerResponse(DefaultResponse.Server_Error)
+            }
         }
         return response
     }
@@ -59,11 +60,13 @@ class UsersService implements IUserServices {
         let response:ServerRes
 
         try{
+            await connectToDb()
+
             const userFound = await UserModel.findOne({user_name:user})
 
-            if(userFound && this._passwordUtility.compareHash(password, userFound.password) ){
+            if(userFound && this.passwordUtility.compareHash(password, userFound.password) ){
 
-                    const token = this._tokenUtility.getToken(userFound.user_name)
+                    const token = this.tokenUtility.getToken(userFound.user_name)
 
                     response = new ServerResponse()
 

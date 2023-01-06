@@ -16,7 +16,3 @@ const httpServer = http.createServer(application)
 application.listen(variables.port, ()=> {
     console.log(`Server is running in port ${variables.port}`)
 })
-
-
-
-// Create objects for dependeny injection

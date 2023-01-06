@@ -15,7 +15,6 @@ const userServices = new UsersService(passwordUtility, tokenUtility)
 // Controllers Classes
 const usersController = new UsersController(userServices)
 
-
 // To Export
 const controllers =  {usersController}
 export default controllers

@@ -4,21 +4,16 @@ import { ServerRes } from "../types/interfaces"
 
 class UsersController {
 
-    private readonly _usersServices:IUserServices
-
-    constructor(userServices:IUserServices){
-        this._usersServices = userServices
-    }
+    constructor(private userServices:IUserServices){}
 
     public async postNewUser(req:Request, res:Response){
-        
-        const result:ServerRes = await this._usersServices.registerUser(req.body)
+        const result:ServerRes = await this.userServices.registerUser(req.body)
         res.statusCode = result.status
         res.send(result)
     }
 
     public async login(req:Request, res:Response){
-        const result:ServerRes = await this._usersServices.loginUser(req.params.user, req.params.password)
+        const result:ServerRes = await this.userServices.loginUser(req.params.user, req.params.psw)
         res.statusCode = result.status
         res.send(result)
     }
