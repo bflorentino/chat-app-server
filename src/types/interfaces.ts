@@ -1,3 +1,4 @@
+import SocketManager from "../socket/SocketManager"
 import { HttpStatus } from "./enums"
 
 export interface User {
@@ -26,7 +27,6 @@ export interface Chat {
 }
 
 export interface UserOnline {
-    _id: string,
     user_name: string
 }
 

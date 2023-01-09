@@ -30,9 +30,7 @@ class UsersService implements IUserServices {
             await model.save()
 
             const token = this.tokenUtility.getToken(user.user_name)
-
             response = new ServerResponse()
-            
             response.status = HttpStatus.CREATED
             
             response.data = {userName:user.user_name, 
@@ -76,9 +74,8 @@ class UsersService implements IUserServices {
                                     name: userFound.name,
                                     lastName:userFound.last_name
                                 }
-                    
                     }
-            else{
+            else {
                 response = new ServerResponse(DefaultResponse.Server_Not_Found)
                 response.message = "Your User or Password are incorrect"
             }
@@ -88,6 +85,27 @@ class UsersService implements IUserServices {
             response = new ServerResponse(DefaultResponse.Server_Error)
         }
         
+        return response
+    }
+
+    public async getMatchedUsers(searchString: string): Promise<ServerRes> {
+
+        let response: ServerResponse
+
+        try{
+            await connectToDb()
+
+            const matchedUsers = await UserModel
+                                        .find({user_name: { $regex:"^" + searchString + "i"}})
+                                        .select('user_name name last_name')
+            
+            response = new ServerResponse()
+            response.data = matchedUsers
+        }
+        catch(e){
+            console.error(e)
+            response = new ServerResponse(DefaultResponse.Server_Error)
+        }
         return response
     }
 }

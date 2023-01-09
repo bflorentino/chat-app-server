@@ -12,6 +12,7 @@ application.use(Express.json())
 application.use("/", route)
 
 const httpServer = http.createServer(application)
+SocketManager.createSocketInstance(httpServer)
 
 application.listen(variables.port, ()=> {
     console.log(`Server is running in port ${variables.port}`)
