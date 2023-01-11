@@ -96,9 +96,9 @@ class UsersService implements IUserServices {
             await connectToDb()
 
             const matchedUsers = await UserModel
-                                        .find({user_name: { $regex:"^" + searchString + "i"}})
+                                        .find({user_name: {$regex:searchString}})
                                         .select('user_name name last_name')
-            
+                        
             response = new ServerResponse()
             response.data = matchedUsers
         }

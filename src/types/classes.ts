@@ -2,6 +2,8 @@ import UsersService from "../services/Users/UsersServices";
 import UsersController from "../controllers/UsersController";
 import PasswordUtilities from "../tools/PasswordUtilities";
 import TokenUtilities from "../tools/TokenUtilities";
+import ChatServices from "../services/Chats/ChatServices";
+import ChatController from "../controllers/ChatController";
 
 // Classes creation to implement dependency injection
 
@@ -11,10 +13,12 @@ const tokenUtility = new TokenUtilities()
 
 // Web Services classess
 const userServices = new UsersService(passwordUtility, tokenUtility)
+const chatServices = new ChatServices()
 
 // Controllers Classes
 const usersController = new UsersController(userServices)
+const chatsController = new ChatController(chatServices)
 
 // To Export
-const controllers =  {usersController}
+const controllers =  {usersController, chatsController}
 export default controllers

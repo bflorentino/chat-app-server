@@ -11,7 +11,8 @@ const ChatSchema = new Schema<Chat>({
         required: true,
     },
     messages: {
-        type: [{user_from:String, 
+        type: [{messageId:String,
+                user_from:String, 
                 content: String, 
                 time: String, 
                 was_seen:Boolean}]
