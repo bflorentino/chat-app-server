@@ -41,6 +41,8 @@ class SocketManager{
     }
 
     private startSockets(socket:Socket) {
+
+        console.log("So, there's a new connection to socket IO from " + socket.id )
         
         socket.on(SocketEvents.userConnected, (user:string) => {
             this.setUserOnline(user, socket.id)

@@ -5,15 +5,16 @@ import SocketManager  from './socket/SocketManager'
 import variables from './config/config'
 import route from './routes'
 
-const application = Express()
+export const application = Express()
+
 application.use(cors())
 application.use(Express.urlencoded({extended:true}))
 application.use(Express.json())
 application.use("/", route)
 
-const httpServer = http.createServer(application)
+export const httpServer = http.createServer(application)
 SocketManager.createSocketInstance(httpServer)
 
-application.listen(variables.port, ()=> {
+httpServer.listen(variables.port, ()=> {
     console.log(`Server is running in port ${variables.port}`)
 })

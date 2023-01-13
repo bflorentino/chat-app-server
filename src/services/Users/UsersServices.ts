@@ -18,14 +18,19 @@ class UsersService implements IUserServices {
         let response:ServerRes;
         
         try{
+
             await connectToDb()
-
-            const userToAdd = {...user }
-            userToAdd.password = await this.passwordUtility.encriptPassword(user.password)
-            userToAdd.last_active = moment().format('MMMM Do YYYY, h:mm:ss a')
-
-            const model = new UserModel(userToAdd)
+            
+            const model = new UserModel(user)
             model._id = user.email
+
+            if(model.validateSync()?.errors){
+                response = new ServerResponse(DefaultResponse.Server_Bad_Request)
+                return response
+            }
+            
+            model.last_active = moment().format('MMMM Do YYYY, h:mm:ss a')
+            model.password = await this.passwordUtility.encriptPassword(model.password)
 
             await model.save()
 
