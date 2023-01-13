@@ -11,6 +11,12 @@ class ChatController {
         res.statusCode = result.status
         res.send(result)
     }
+
+    public async getUserLastTime(req:Request, res:Response){
+        const result:ServerResponse = await this.chatServices.getUserLastTime(req.params.userName)
+        res.statusCode = result.status
+        res.send(result)
+    }
 }
 
 export default ChatController

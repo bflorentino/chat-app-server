@@ -12,5 +12,6 @@ route.get('/searchUsers/:searchString',(req, res) => controllers.usersController
 
 // CHATS ROUTES
 route.get('/chats/:userName',(req, res) => controllers.chatsController.getChats(req, res))
+route.get('/lastTime/:userName',(req, res) => controllers.chatsController.getUserLastTime(req, res))
 
 export default route

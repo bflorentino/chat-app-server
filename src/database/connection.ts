@@ -1,9 +1,13 @@
 import mongoose from "mongoose";
 import variables from './../config/config'
 
+const connectionString = variables.nodeEnv === "test" 
+    ? variables.connectionStringTest
+    : variables.connectionString 
+
 const connectToDb = async() => {
     try{
-        await mongoose.connect(variables.connectionString as string)
+        await mongoose.connect(connectionString as string)
     }
     catch(e){
         console.log("Sorry, a connection error ocurred")
