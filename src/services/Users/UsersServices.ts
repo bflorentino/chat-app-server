@@ -88,8 +88,7 @@ class UsersService implements IUserServices {
         catch(e){
             console.log(e)
             response = new ServerResponse(DefaultResponse.Server_Error)
-        }
-        
+        }     
         return response
     }
 
