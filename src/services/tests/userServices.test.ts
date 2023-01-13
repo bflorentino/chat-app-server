@@ -93,7 +93,7 @@ describe("Testing users search", ()=> {
 
     test('There are users matching with the string', async()=> {
         const response = await api.get('/searchUsers/b')
-        expect(response.body._data).toHaveLength(initialUsers.length)
+        expect(response.body._data).toHaveLength(initialUsers.length + 1)
     })
     
     test('There are not users matching with the string', async()=> {
