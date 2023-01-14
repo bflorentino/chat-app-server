@@ -13,7 +13,7 @@ export interface User {
 }
 
 export interface Message{
-    messageId: string,
+    messageId?: string,
     user_from: string,
     time: string,
     content: string,
@@ -23,7 +23,7 @@ export interface Message{
 export interface Chat {
     user_1: string,
     user_2: string,
-    started_on: Date,
+    started_on: string,
     messages:Message[]
 }
 

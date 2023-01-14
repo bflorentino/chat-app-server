@@ -4,7 +4,8 @@ import UserModel from "../../models/User";
 import IChatServices from "./IChatServices";
 import connectToDb from "../../database/connection";
 import DefaultResponses from '../../constants/index'
-import { Chat } from "../../types/interfaces";
+import { Chat, Message } from "../../types/interfaces";
+import { Types } from "mongoose";
 
 class ChatServices implements IChatServices {
 
@@ -41,6 +42,58 @@ class ChatServices implements IChatServices {
             response = new ServerResponse(DefaultResponses.Server_Error)
         }
         return response
+    }
+
+    public async addNewMessage(message:Message, userFrom:string, userTo:string):Promise<ServerResponse> {
+
+        let response:ServerResponse = new ServerResponse()
+
+        try{
+            await connectToDb()
+
+            // Check if already exists a chat with both users
+            const chatExisting = await ChatModel.findOne({$or: [
+                                                        {$and: [{user_1:userFrom}, {user_2:userTo}]}, 
+                                                        {$and: [{user_2:userFrom ,user_1:userTo}]}
+                                                    ]
+                 
+                                                })
+            
+            let chatId:Types.ObjectId | undefined | null = chatExisting?._id
+
+            // Control if chat exists or not. If chat doesn't exist, then create a chat with user
+            if(!chatExisting){
+                chatId = await this.createChat(userFrom, userTo)
+            }
+
+            if(!chatId){
+                response = new ServerResponse(DefaultResponses.Server_Error)
+                return response
+            }
+
+            // Update chat with sent message
+        }
+        catch(e){
+            console.log(e)
+            response = new ServerResponse(DefaultResponses.Server_Error)
+        }
+        return response
+    }
+
+    private async createChat(user_1:string, user_2:string):Promise<Types.ObjectId | null>{
+
+        try{
+
+            const model = new ChatModel({user_1, user_2})
+            model.started_on = new Date().toLocaleDateString()
+
+            const chatId = await model.save()
+
+            return chatId._id
+        }
+        catch(e){
+            return null
+        }
     }
 }
 

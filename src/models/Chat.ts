@@ -15,10 +15,12 @@ const ChatSchema = new Schema<Chat>({
                 user_from:String, 
                 content: String, 
                 time: String, 
-                was_seen:Boolean}]
+                was_seen:Boolean}],
+        
+        default : []
     },
     started_on : {
-        type: Date,
+        type: String,
         required: true
     }
 })
