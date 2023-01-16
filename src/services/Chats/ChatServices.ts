@@ -6,6 +6,7 @@ import connectToDb from "../../database/connection";
 import DefaultResponses from '../../constants/index'
 import { Chat, Message } from "../../types/interfaces";
 import { Types } from "mongoose";
+import moment from "moment";
 
 class ChatServices implements IChatServices {
 
@@ -44,9 +45,9 @@ class ChatServices implements IChatServices {
         return response
     }
 
-    public async addNewMessage(message:Message, userFrom:string, userTo:string):Promise<ServerResponse> {
+    public async addNewMessage(message:Message, userFrom:string, userTo:string):Promise<Message | null> {
 
-        let response:ServerResponse = new ServerResponse()
+        //let response:ServerResponse = new ServerResponse()
 
         try{
             await connectToDb()
@@ -61,32 +62,47 @@ class ChatServices implements IChatServices {
             
             let chatId:Types.ObjectId | undefined | null = chatExisting?._id
 
-            // Control if chat exists or not. If chat doesn't exist, then create a chat with user
+            // If chat doesn't exist, then create a chat with user
             if(!chatExisting){
                 chatId = await this.createChat(userFrom, userTo)
             }
 
             if(!chatId){
-                response = new ServerResponse(DefaultResponses.Server_Error)
-                return response
+                // response = new ServerResponse(DefaultResponses.Server_Error)
+                // return response
+                return null
             }
-
+            
             // Update chat with sent message
+            
+            const messageToAdd = {...message, date:moment().format('MMMM Do YYYY'), time:moment().format('h:mm:ss a')}
+
+            await ChatModel.updateOne({_id: chatId}, 
+                                    {$push:{messages:[messageToAdd]}
+                                })
+            
+            // response = new ServerResponse()
+            // response.data = message
+            return messageToAdd
         }
         catch(e){
             console.log(e)
-            response = new ServerResponse(DefaultResponses.Server_Error)
+            //response = new ServerResponse(DefaultResponses.Server_Error)
         }
-        return response
+
+        return null
     }
 
     private async createChat(user_1:string, user_2:string):Promise<Types.ObjectId | null>{
 
         try{
-
             const model = new ChatModel({user_1, user_2})
             model.started_on = new Date().toLocaleDateString()
 
+            if(model.validateSync()?.errors){
+                return null
+            }
+            
             const chatId = await model.save()
 
             return chatId._id

@@ -1,17 +1,9 @@
-import connectToDb from '../../database/connection'
 import { httpServer } from '../../index'
-import UserModel from '../../models/User'
-import { initialUsers } from './helpers'
+import { setDataReady, initialUsers } from './helpers'
 import { api } from './helpers'
 
 beforeAll(async ()=> {
-    await connectToDb()
-    await UserModel.deleteMany({})
-
-    for(const user of initialUsers){
-        const userToSave = new UserModel(user)
-        await userToSave.save()
-    }
+    await setDataReady()
 })
 
 // Testing POST new users

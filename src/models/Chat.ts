@@ -14,7 +14,8 @@ const ChatSchema = new Schema<Chat>({
         type: [{messageId:String,
                 user_from:String, 
                 content: String, 
-                time: String, 
+                time: String,
+                date: String,
                 was_seen:Boolean}],
         
         default : []

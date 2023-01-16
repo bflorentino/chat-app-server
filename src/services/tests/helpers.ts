@@ -1,5 +1,8 @@
 import { application } from "../../index"
 import supertest from "supertest"
+import connectToDb from "../../database/connection"
+import UserModel from '../../models/User'
+import ChatModel from "../../models/Chat"
 
 export const api = supertest(application)
 
@@ -29,3 +32,15 @@ export const initialUsers = [
         _id:"bienvenido@hotmail.com"
     }   
 ]
+
+export const setDataReady = async() => {
+    
+    await connectToDb()
+    await UserModel.deleteMany({})
+    await ChatModel.deleteMany({})
+
+    for(const user of initialUsers){
+        const userToSave = new UserModel(user)
+        await userToSave.save()
+    }
+}

@@ -10,6 +10,7 @@ export const enum HttpStatus {OK = 200,
 export const enum SocketEvents { connect= "connect",
                                 userConnected = "user-connected",
                                 disconnect = "disconnect",
+                                userDisconnected = "user-disconnected",
                                 sendMessage = "sendMessage",
                                 messageReceived = "messageReceived",
                                 updateMessage = "updateMessage",
@@ -17,5 +18,6 @@ export const enum SocketEvents { connect= "connect",
                                 deleteMessage = "deleteMessage",
                                 messageDeleted = "messageDeleted",
                                 readMessage = "readMessage",
-                                messageRead = "messageRead"
+                                messageRead = "messageRead",
+                                errorInMessageSend="errorInMessageSend"
 }

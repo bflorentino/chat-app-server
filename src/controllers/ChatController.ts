@@ -4,6 +4,8 @@ import ServerResponse from '../services/ServerRes'
 
 class ChatController {
 
+    // ONLY TO MANAGE METHODS AND SERVICES NOT MANAGED BY WEBSOCKETS PROTOCOL
+
     constructor(private chatServices:IChatServices){}
 
     public async getChats(req:Request, res:Response){

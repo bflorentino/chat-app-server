@@ -15,7 +15,8 @@ export interface User {
 export interface Message{
     messageId?: string,
     user_from: string,
-    time: string,
+    time?: string,
+    date?:string,
     content: string,
     was_seen: boolean,
 }

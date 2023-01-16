@@ -13,7 +13,7 @@ const tokenUtility = new TokenUtilities()
 
 // Web Services classess
 const userServices = new UsersService(passwordUtility, tokenUtility)
-const chatServices = new ChatServices()
+export const chatServices = new ChatServices()
 
 // Controllers Classes
 const usersController = new UsersController(userServices)

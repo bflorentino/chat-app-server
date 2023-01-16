@@ -1,6 +1,8 @@
 import { Server as HttpServer } from 'http'
 import { Socket, Server } from "socket.io";
+import ChatServices from '../services/Chats/ChatServices';
 import { SocketEvents } from '../types/enums';
+import { Message } from '../types/interfaces';
 
 class SocketManager{
 
@@ -8,7 +10,7 @@ class SocketManager{
     private _io:Server;
     private _usersOnline:{ [ key:string ]:string }
 
-    private constructor(server:HttpServer){
+    private constructor(server:HttpServer, private chatServices:ChatServices){
         this._usersOnline = {}
         
         // Socket Initialization
@@ -30,9 +32,9 @@ class SocketManager{
     
     get io() {return this._io}
 
-    public static createSocketInstance(server:HttpServer){
+    public static createSocketInstance(server:HttpServer, chatService:ChatServices){
         if(!this._socketManager){
-            this._socketManager = new SocketManager(server)
+            this._socketManager = new SocketManager(server, chatService)
         }
     }
 
@@ -48,8 +50,20 @@ class SocketManager{
             this.setUserOnline(user, socket.id)
         })
 
+        socket.on(SocketEvents.sendMessage, async (message:Message, userFrom:string, userTo:string) => {
+            
+            const res = await this.chatServices.addNewMessage(message, userFrom, userTo)
+            
+            if(res){
+                this.sendSocketMessage(SocketEvents.messageReceived, [userFrom, userTo], res )
+                return
+            }
+            this.sendSocketMessage(SocketEvents.errorInMessageSend, [userFrom] )
+        })
+
         socket.on(SocketEvents.disconnect, (user:string) => {
             this.setUserOffline(user)
+            this.sendSocketMessage(SocketEvents.userDisconnected, Object.keys(this.usersOnline), socket.id)
         })
     }
     
@@ -63,6 +77,17 @@ class SocketManager{
 
     public isUserOnline(user:string):boolean{
         return this._usersOnline.hasOwnProperty(user)
+    }
+
+    private sendSocketMessage(name:SocketEvents, usersTo:string[], payload?:Object ){
+
+        usersTo.forEach(user => {
+           payload
+            ? 
+            this._io.to(this.usersOnline[user]).emit(name, payload)
+            :
+            this._io.to(this.usersOnline[user]).emit(name)
+        })
     }
 }
 
