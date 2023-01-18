@@ -45,9 +45,7 @@ class ChatServices implements IChatServices {
         return response
     }
 
-    public async addNewMessage(message:Message, userFrom:string, userTo:string):Promise<MessageRes | null> {
-
-        //let response:ServerResponse = new ServerResponse()
+    public async addNewMessage(message:Message, userFrom:string, userTo:string):Promise<MessageRes | Chat | null> {
 
         try{
             await connectToDb()
@@ -57,7 +55,6 @@ class ChatServices implements IChatServices {
                                                         {$and: [{user_1:userFrom}, {user_2:userTo}]}, 
                                                         {$and: [{user_2:userFrom ,user_1:userTo}]}
                                                     ]
-                 
                                                 })
             
             let chatId:Types.ObjectId | undefined | null = chatExisting?._id
@@ -72,13 +69,20 @@ class ChatServices implements IChatServices {
             }
             
             // Update chat with sent message
-            const messageToAdd = {...message, date:moment().format('MMMM Do YYYY'), time:moment().format('h:mm:ss a')}
+            const messageToAdd = {...message, date:moment().format('M/D/YYYY'), time:moment().format('h:mm a')}
 
             await ChatModel.updateOne({_id: chatId}, 
                                     {$push:{messages:[messageToAdd]}
                                 })
             
-            return {message:{...messageToAdd}, chatId:chatId.toString()}
+            if(chatExisting){
+                return {message:{...messageToAdd}, chatId:chatId.toString()}
+            }
+
+            // In case it was created a new chat it's neccessary to return a chat
+            const newChat:Chat = await ChatModel.findById({_id:chatId}) as Chat 
+            return newChat
+
         }
         catch(e){
             console.log(e)

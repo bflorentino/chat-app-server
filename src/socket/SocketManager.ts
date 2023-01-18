@@ -43,8 +43,6 @@ class SocketManager{
     }
 
     private startSockets = (socket:Socket) => {
-
-        console.log("So, there's a new connection to socket IO from " + socket.id )
         
         socket.on(SocketEvents.userConnected, (user:string) => {
 
@@ -61,7 +59,6 @@ class SocketManager{
 
         socket.on(SocketEvents.sendMessage, async (message:Message, userFrom:string, userTo:string) => {
             
-            console.log(message)
             const res = await this.chatServices.addNewMessage(message, userFrom, userTo)
             
             if(res){

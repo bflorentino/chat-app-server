@@ -1,6 +1,7 @@
 import { chatServices } from "../../types/classes";
 import {setApi, initialUsers, setDataReady } from "./helpers";
 import { httpServer } from "../../index";
+import { Chat, MessageRes } from "../../types/interfaces";
 
 const api = setApi()
 
@@ -16,9 +17,12 @@ describe("Send Message", () => {
                                         user_from:"bflorentino",  
                                         content:"Prueba de mensaje", 
                                         was_seen:false}, 
-                                "bflorentino", "bryan")
+                                "bflorentino", "bryan") as Chat
     
-        expect(res).toHaveProperty("content")    
+        expect(res).toBeTruthy()
+        expect(res).toHaveProperty("messages")
+        expect(res.messages).toHaveLength(1)
+        expect(res.messages[0]).toHaveProperty("content")
     })
 })
 
