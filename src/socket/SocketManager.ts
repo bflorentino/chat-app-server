@@ -25,7 +25,7 @@ class SocketManager{
                 }
             }
         )
-        this._io.on("connect", this.startSockets)
+        this._io.on(SocketEvents.connect, this.startSockets)
     }
 
     get usersOnline() {return this._usersOnline}
@@ -42,16 +42,26 @@ class SocketManager{
         return this._socketManager
     }
 
-    private startSockets(socket:Socket) {
+    private startSockets = (socket:Socket) => {
 
         console.log("So, there's a new connection to socket IO from " + socket.id )
         
         socket.on(SocketEvents.userConnected, (user:string) => {
+
             this.setUserOnline(user, socket.id)
+            
+            const { [user]:key, ...usersToSendConnection } = this.usersOnline
+
+            this.sendSocketMessage(
+                        SocketEvents.userConnected, 
+                        Object.keys(usersToSendConnection), 
+                        this.usersOnline
+                    )
         })
 
         socket.on(SocketEvents.sendMessage, async (message:Message, userFrom:string, userTo:string) => {
             
+            console.log(message)
             const res = await this.chatServices.addNewMessage(message, userFrom, userTo)
             
             if(res){
@@ -67,19 +77,19 @@ class SocketManager{
         })
     }
     
-    private setUserOnline(user:string, id:string){
+    private setUserOnline = (user:string, id:string) =>{
         this._usersOnline[user] = id
     }
     
-    private setUserOffline(user:string){
+    private setUserOffline = (user:string) => {
         delete this._usersOnline[user]
     }
 
-    public isUserOnline(user:string):boolean{
+    public isUserOnline = (user:string):boolean =>{
         return this._usersOnline.hasOwnProperty(user)
     }
 
-    private sendSocketMessage(name:SocketEvents, usersTo:string[], payload?:Object ){
+    private sendSocketMessage = (name:SocketEvents, usersTo:string[], payload?:Object ) =>{
 
         usersTo.forEach(user => {
            payload

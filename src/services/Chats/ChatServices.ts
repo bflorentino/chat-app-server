@@ -4,7 +4,7 @@ import UserModel from "../../models/User";
 import IChatServices from "./IChatServices";
 import connectToDb from "../../database/connection";
 import DefaultResponses from '../../constants/index'
-import { Chat, Message } from "../../types/interfaces";
+import { Chat, Message, MessageRes } from "../../types/interfaces";
 import { Types } from "mongoose";
 import moment from "moment";
 
@@ -19,7 +19,7 @@ class ChatServices implements IChatServices {
             const chats:Chat[] = await ChatModel.find({$or : [{user_1:userName}, {user_2:userName}]})
     
             response = new ServerResponse()
-            response.data = chats
+            response.data =  this.transformArrayToObject(chats, (k) => k._id.toString())
         }
         catch(e){
             console.log(e)
@@ -45,7 +45,7 @@ class ChatServices implements IChatServices {
         return response
     }
 
-    public async addNewMessage(message:Message, userFrom:string, userTo:string):Promise<Message | null> {
+    public async addNewMessage(message:Message, userFrom:string, userTo:string):Promise<MessageRes | null> {
 
         //let response:ServerResponse = new ServerResponse()
 
@@ -68,28 +68,21 @@ class ChatServices implements IChatServices {
             }
 
             if(!chatId){
-                // response = new ServerResponse(DefaultResponses.Server_Error)
-                // return response
                 return null
             }
             
             // Update chat with sent message
-            
             const messageToAdd = {...message, date:moment().format('MMMM Do YYYY'), time:moment().format('h:mm:ss a')}
 
             await ChatModel.updateOne({_id: chatId}, 
                                     {$push:{messages:[messageToAdd]}
                                 })
             
-            // response = new ServerResponse()
-            // response.data = message
-            return messageToAdd
+            return {message:{...messageToAdd}, chatId:chatId.toString()}
         }
         catch(e){
             console.log(e)
-            //response = new ServerResponse(DefaultResponses.Server_Error)
         }
-
         return null
     }
 
@@ -103,13 +96,23 @@ class ChatServices implements IChatServices {
                 return null
             }
             
-            const chatId = await model.save()
+            const chat = await model.save()
 
-            return chatId._id
+            return chat._id
         }
         catch(e){
             return null
         }
+    }
+
+    private transformArrayToObject = <T>(array:T[], propertyKeySelector:(k:T)=> string) => {
+
+        const intoObject = array.reduce((acc, curr) => {
+            Object.assign(acc, {[propertyKeySelector(curr)]: curr })
+            return acc
+        }, {})
+
+        return intoObject
     }
 }
 

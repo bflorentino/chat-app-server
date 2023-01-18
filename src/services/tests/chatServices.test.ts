@@ -1,5 +1,8 @@
 import { chatServices } from "../../types/classes";
-import { api, initialUsers, setDataReady } from "./helpers";
+import {setApi, initialUsers, setDataReady } from "./helpers";
+import { httpServer } from "../../index";
+
+const api = setApi()
 
 beforeAll(async () => {
     await setDataReady()
@@ -17,4 +20,32 @@ describe("Send Message", () => {
     
         expect(res).toHaveProperty("content")    
     })
-   })
+})
+
+describe("Chats", ()=> {
+
+    test("Should return JSON object", async()=> {
+        
+        await api.get("/chats/bflorentino")
+                .expect("Content-type", /application\/json/)
+    })
+
+    test("Should return one chat", async() => {
+    
+        const res = await api.get("/chats/bflorentino")
+
+        expect(res.statusCode).toBe(200)
+        expect(typeof(res.body._data)).toBe("object")
+        expect(Object.values(res.body._data)).toHaveLength(1)
+    })
+
+    test("Shold return empty object", async()=> {
+        
+        const res = await api.get("/chats/bienvenido")
+        expect(Object.values(res.body._data)).toHaveLength(0)
+    })
+})
+
+afterAll(()=> {
+    httpServer.close()
+})

@@ -1,5 +1,6 @@
 import SocketManager from "../socket/SocketManager"
 import { HttpStatus } from "./enums"
+import { Types } from "mongoose"
 
 export interface User {
     _id? :string,
@@ -21,7 +22,13 @@ export interface Message{
     was_seen: boolean,
 }
 
+export interface MessageRes {
+    message: Message,
+    chatId:string
+}
+
 export interface Chat {
+    _id:Types.ObjectId
     user_1: string,
     user_2: string,
     started_on: string,

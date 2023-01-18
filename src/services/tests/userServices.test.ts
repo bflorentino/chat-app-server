@@ -1,6 +1,8 @@
 import { httpServer } from '../../index'
 import { setDataReady, initialUsers } from './helpers'
-import { api } from './helpers'
+import { setApi } from './helpers'
+
+const api = setApi()
 
 beforeAll(async ()=> {
     await setDataReady()

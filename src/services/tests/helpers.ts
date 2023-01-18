@@ -4,7 +4,7 @@ import connectToDb from "../../database/connection"
 import UserModel from '../../models/User'
 import ChatModel from "../../models/Chat"
 
-export const api = supertest(application)
+export const setApi = () => supertest(application)
 
 export const initialUsers = [
     {
