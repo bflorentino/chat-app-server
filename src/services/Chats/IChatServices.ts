@@ -1,9 +1,8 @@
 import { Chat, Message, MessageRes } from "../../types/interfaces";
-import ServerResponse from "../ServerRes";
+import { ServerRes } from "../../types/interfaces"
 
 export default interface IChatServices {
 
-    getChats(userName:string): Promise<ServerResponse>; 
-    getUserLastTime(userName:string): Promise<ServerResponse>; 
+    getChats(userName:string): Promise<ServerRes>; 
     addNewMessage(message:Message,user_from:string, user_to:string) : Promise<MessageRes | Chat | null>;
 }

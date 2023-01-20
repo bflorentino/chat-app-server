@@ -1,7 +1,7 @@
 import { chatServices } from "../../types/classes";
 import {setApi, initialUsers, setDataReady } from "./helpers";
 import { httpServer } from "../../index";
-import { Chat, MessageRes } from "../../types/interfaces";
+import { Chat} from "../../types/interfaces";
 
 const api = setApi()
 

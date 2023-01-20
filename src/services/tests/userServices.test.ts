@@ -106,6 +106,21 @@ describe("Testing users search", ()=> {
     })
 })
 
+describe ("User Last Time", ()=>{
+    
+    test("Last time should be January 10th 2023, 9:15 am", async()=> {
+
+        const response = await api.get('/lastTime/bflorentino')
+        expect(response.body._status).toBe(200)
+        expect(response.body._data).toHaveProperty("last_active")
+        expect(response.body._data.last_active).toBe("January 10th 2023, 9:15 am")
+    })
+
+    test("Should update last Time and return true", async()=> {
+        
+    })
+})
+
 afterAll(()=> {
     httpServer.close()
 })

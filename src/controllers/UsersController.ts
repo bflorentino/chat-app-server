@@ -23,6 +23,12 @@ class UsersController {
         res.statusCode = result.status
         res.send(result)
     }
+
+    public async getUserLastTime(req:Request, res:Response){
+        const result:ServerRes = await this.userServices.getUserLastTime(req.params.userName)
+        res.statusCode = result.status
+        res.send(result)
+    }
 }
 
 export default UsersController

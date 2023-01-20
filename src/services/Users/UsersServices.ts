@@ -29,7 +29,7 @@ class UsersService implements IUserServices {
                 return response
             }
             
-            model.last_active = moment().format('MMMM Do YYYY, h:mm:ss a')
+            model.last_active = moment().format('MMMM Do YYYY, h:mm a')
             model.password = await this.passwordUtility.encriptPassword(model.password)
 
             await model.save()
@@ -111,6 +111,43 @@ class UsersService implements IUserServices {
             response = new ServerResponse(DefaultResponse.Server_Error)
         }
         return response
+    }
+
+    public async getUserLastTime(userName:string):Promise<ServerResponse>{
+        let response:ServerResponse
+        
+        try{
+            await connectToDb()
+            const lastTime = await UserModel.findOne({user_name:userName}).select("last_active")
+            
+            if(!lastTime){
+                throw "No User found"
+            }
+                        
+            response = new ServerResponse()
+            response.data = lastTime
+        }
+        catch(e){
+            console.log(e)
+            response = new ServerResponse(DefaultResponse.Server_Error)
+        }
+        return response
+    }
+
+    public async updateUserLastTime(userName:string):Promise<Boolean> {
+
+        try{
+            await connectToDb()
+            const updated = await UserModel.updateOne({user_name:userName}, {last_active: moment().format("MMMM Do YYYY, h:mm a")})
+
+            if(updated.acknowledged){
+                return true
+            }
+        }
+        catch(e){
+            console.log(e)
+        }
+        return false
     }
 }
 

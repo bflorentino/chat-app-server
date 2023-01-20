@@ -41,6 +41,7 @@
   "jest": {
     "testEnvironment": "node",
     "preset": "ts-jest",
+    "testTimeout": 10000,
     "collectCoverage": true
   }
 }

@@ -87,7 +87,6 @@ class SocketManager{
     }
 
     private sendSocketMessage = (name:SocketEvents, usersTo:string[], payload?:Object ) =>{
-
         usersTo.forEach(user => {
            payload
             ? 

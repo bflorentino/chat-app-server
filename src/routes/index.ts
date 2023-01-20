@@ -10,8 +10,10 @@ route.get('/authentication/login/:user/:psw',(req, res) => controllers.usersCont
 // Search Users
 route.get('/searchUsers/:searchString',(req, res) => controllers.usersController.matchedUsers(req, res))
 
+// Time connection
+route.get('/lastTime/:userName',(req, res) => controllers.usersController.getUserLastTime(req, res))
+
 // CHATS ROUTES
 route.get('/chats/:userName',(req, res) => controllers.chatsController.getChats(req, res))
-route.get('/lastTime/:userName',(req, res) => controllers.chatsController.getUserLastTime(req, res))
 
 export default route

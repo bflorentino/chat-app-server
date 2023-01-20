@@ -28,22 +28,6 @@ class ChatServices implements IChatServices {
         return response
     }
 
-    public async getUserLastTime(userName:string):Promise<ServerResponse>{
-        let response:ServerResponse
-        
-        try{
-            await connectToDb()
-            const lastTime = await UserModel.find({user_name:userName}).select('last_active')
-    
-            response = new ServerResponse()
-            response.data = lastTime as object
-        }
-        catch(e){
-            console.log(e)
-            response = new ServerResponse(DefaultResponses.Server_Error)
-        }
-        return response
-    }
 
     public async addNewMessage(message:Message, userFrom:string, userTo:string):Promise<MessageRes | Chat | null> {
 

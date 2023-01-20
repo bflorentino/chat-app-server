@@ -3,6 +3,7 @@ import supertest from "supertest"
 import connectToDb from "../../database/connection"
 import UserModel from '../../models/User'
 import ChatModel from "../../models/Chat"
+import moment from "moment"
 
 export const setApi = () => supertest(application)
 
@@ -13,6 +14,7 @@ export const initialUsers = [
         last_name:"Rodriguez",
         email:"jose@hotmail.com",
         password:"$2a$10$B3Cxvo5855MW92WlqAxhd.I.rKMOrDvEHNyVHBJZO/4AZMPmBp/EG",
+        last_active:moment("2023-01-10 09:15:00").format("MMMM Do YYYY, h:mm a"),
         _id:"jose@hotmail.com"
     },
     {
