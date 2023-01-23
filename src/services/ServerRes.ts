@@ -4,7 +4,7 @@ import { HttpStatus } from "../types/enums";
 class ServerResponse implements ServerRes {
     
     private _message:string | null = null;
-    private _data:object | null = {};
+    private _data:Object | null = {};
     private _status:number = HttpStatus.OK;
     private _success:boolean = true;
 
@@ -24,11 +24,11 @@ class ServerResponse implements ServerRes {
 
     get message(){return this._message as string}
 
-    set data(data:object){
+    set data(data:Object){
         this._data = data
     }
 
-    get data(){return this._data as object}
+    get data(){return this._data as Object}
 
     set status(status:HttpStatus){
         this._status = status

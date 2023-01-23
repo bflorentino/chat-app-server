@@ -125,7 +125,7 @@ class UsersService implements IUserServices {
             }
                         
             response = new ServerResponse()
-            response.data = lastTime
+            response.data = lastTime.last_active as string
         }
         catch(e){
             console.log(e)
@@ -138,7 +138,7 @@ class UsersService implements IUserServices {
 
         try{
             await connectToDb()
-            const updated = await UserModel.updateOne({user_name:userName}, {last_active: moment().format("MMMM Do YYYY, h:mm a")})
+            const updated = await UserModel.updateOne({user_name:userName}, {last_active: moment().format("MMMM DD YYYY, h:mm a")})
 
             if(updated.acknowledged){
                 return true

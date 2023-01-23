@@ -1,4 +1,5 @@
 import { httpServer } from '../../index'
+import { userServices } from '../../types/classes'
 import { setDataReady, initialUsers } from './helpers'
 import { setApi } from './helpers'
 
@@ -28,7 +29,6 @@ describe("Testing POST new users", ()=> {
 
         const response = await api.get('/searchUsers/bflorentin0')
         expect(response.body._data).toHaveLength(1)
-
     })
     
     test('An invalid user cannot be added (repeated email)', async()=>{
@@ -108,16 +108,20 @@ describe("Testing users search", ()=> {
 
 describe ("User Last Time", ()=>{
     
-    test("Last time should be January 10th 2023, 9:15 am", async()=> {
+    test("Last time should be January 10 2023, 9:15 am", async()=> {
 
         const response = await api.get('/lastTime/bflorentino')
         expect(response.body._status).toBe(200)
-        expect(response.body._data).toHaveProperty("last_active")
-        expect(response.body._data.last_active).toBe("January 10th 2023, 9:15 am")
+        expect(response.body._data).toBe("January 10 2023, 9:15 am")
     })
 
     test("Should update last Time and return true", async()=> {
-        
+
+        const response = await userServices.updateUserLastTime('bflorentino')
+        expect(response).toBe(true)
+
+        const newRes = await api.get('/lastTime/bflorentino')
+        expect(newRes.body._data.last_active).not.toBe("January 10th 2023, 9:15 am")
     })
 })
 

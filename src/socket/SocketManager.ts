@@ -1,6 +1,7 @@
 import { Server as HttpServer } from 'http'
 import { Socket, Server } from "socket.io";
 import ChatServices from '../services/Chats/ChatServices';
+import UsersService from '../services/Users/UsersServices';
 import { SocketEvents } from '../types/enums';
 import { Message } from '../types/interfaces';
 
@@ -10,7 +11,7 @@ class SocketManager{
     private _io:Server;
     private _usersOnline:{ [ key:string ]:string }
 
-    private constructor(server:HttpServer, private chatServices:ChatServices){
+    private constructor(server:HttpServer, private chatServices:ChatServices, private userServices:UsersService){
         this._usersOnline = {}
         
         // Socket Initialization
@@ -32,9 +33,9 @@ class SocketManager{
     
     get io() {return this._io}
 
-    public static createSocketInstance(server:HttpServer, chatService:ChatServices){
+    public static createSocketInstance(server:HttpServer, chatService:ChatServices, userServices:UsersService){
         if(!this._socketManager){
-            this._socketManager = new SocketManager(server, chatService)
+            this._socketManager = new SocketManager(server, chatService, userServices)
         }
     }
 
@@ -47,12 +48,10 @@ class SocketManager{
         socket.on(SocketEvents.userConnected, (user:string) => {
 
             this.setUserOnline(user, socket.id)
-            
-            const { [user]:key, ...usersToSendConnection } = this.usersOnline
-
+        
             this.sendSocketMessage(
                         SocketEvents.userConnected, 
-                        Object.keys(usersToSendConnection), 
+                        Object.keys(this.usersOnline), 
                         this.usersOnline
                     )
         })
@@ -68,9 +67,15 @@ class SocketManager{
             this.sendSocketMessage(SocketEvents.errorInMessageSend, [userFrom] )
         })
 
-        socket.on(SocketEvents.disconnect, (user:string) => {
-            this.setUserOffline(user)
-            this.sendSocketMessage(SocketEvents.userDisconnected, Object.keys(this.usersOnline), socket.id)
+        socket.on(SocketEvents.disconnect, async () => {
+
+            const userOff = Object.keys(this._usersOnline).find(user => this._usersOnline[user] === socket.id )
+            
+            if(userOff){
+                this.setUserOffline(userOff)
+                await this.userServices.updateUserLastTime(userOff)
+                this.sendSocketMessage(SocketEvents.userDisconnected, Object.keys(this._usersOnline), userOff)
+            }
         })
     }
     
@@ -78,7 +83,7 @@ class SocketManager{
         this._usersOnline[user] = id
     }
     
-    private setUserOffline = (user:string) => {
+    private setUserOffline = async (user:string) => {
         delete this._usersOnline[user]
     }
 
