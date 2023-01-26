@@ -10,6 +10,7 @@ export interface User {
     email: string,
     password: string,
     phone? : string,
+    profilePic:string | null,
     last_active?:string
 }
 

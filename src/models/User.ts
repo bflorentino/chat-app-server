@@ -33,6 +33,10 @@ const UserSchema = new Schema<User>({
     },
     phone: {
         type: String
+    },
+    profilePic:{
+        type: String,
+        default:null
     }
 }, {_id:false})
 

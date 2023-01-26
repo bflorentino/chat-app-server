@@ -5,8 +5,9 @@ interface IUsers {
     registerUser(user:User): Promise<ServerRes>,
     loginUser(userName:string, password:string):Promise<ServerRes>
     getMatchedUsers(searchString:string):Promise<ServerRes>
-    getUserLastTime(userName:string): Promise<ServerRes>; 
+    getUserLastTime(userName:string): Promise<ServerRes> 
     updateUserLastTime(userName:string):Promise<Boolean>
+    getUserData(userName:string):Promise<ServerRes>
 }
 
 export default IUsers

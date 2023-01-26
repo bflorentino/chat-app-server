@@ -77,7 +77,8 @@ class UsersService implements IUserServices {
                                     userName:userFound.user_name,
                                     email:userFound.email,
                                     name: userFound.name,
-                                    lastName:userFound.last_name
+                                    lastName:userFound.last_name,
+                                    profilePic: userFound.profilePic
                                 }
                     }
             else {
@@ -113,7 +114,7 @@ class UsersService implements IUserServices {
         return response
     }
 
-    public async getUserLastTime(userName:string):Promise<ServerResponse>{
+    public getUserLastTime = async(userName:string):Promise<ServerResponse> => {
         let response:ServerResponse
         
         try{
@@ -148,6 +149,29 @@ class UsersService implements IUserServices {
             console.log(e)
         }
         return false
+    }
+
+    public getUserData = async (userName:string):Promise<ServerResponse> => {
+
+        // Get names, last name and picture of the user
+        let response : ServerResponse
+
+        try{
+            await connectToDb()
+            const userData = await UserModel.findOne({user_name:userName}).select("name last_name profilePic")
+
+            if(!userData){
+                throw("No user found")
+            }
+
+            response = new ServerResponse()
+            response.data = userData
+        }
+        catch(e){
+            console.log(e)
+            response = new ServerResponse(DefaultResponse.Server_Error)
+        }
+        return response
     }
 }
 

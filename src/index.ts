@@ -5,10 +5,13 @@ import SocketManager  from './socket/SocketManager'
 import variables from './config/config'
 import route from './routes'
 import { chatServices, userServices } from './types/classes'
+import fileUpload from 'express-fileupload'
 
 export const application = Express()
 
 application.use(cors())
+application.use("/profilePic", Express.static("public/ProfileImg"))
+application.use(fileUpload())
 application.use(Express.urlencoded({extended:true}))
 application.use(Express.json())
 application.use("/", route)

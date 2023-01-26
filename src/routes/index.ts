@@ -4,16 +4,17 @@ import controllers from "../types/classes";
 const route = Express.Router()
 
 // AUTHENTICATION ENDPOINTS
-route.post('/authentication/register',       (req, res) => controllers.usersController.postNewUser(req, res))
-route.get('/authentication/login/:user/:psw',(req, res) => controllers.usersController.login(req, res))
+route.post('/authentication/register', controllers.usersController.postNewUser)
+route.get('/authentication/login/:user/:psw',controllers.usersController.login)
 
 // Search Users
-route.get('/searchUsers/:searchString',(req, res) => controllers.usersController.matchedUsers(req, res))
+route.get('/searchUsers/:searchString',controllers.usersController.matchedUsers)
 
 // Time connection
-route.get('/lastTime/:userName',(req, res) => controllers.usersController.getUserLastTime(req, res))
+route.get('/lastTime/:userName',controllers.usersController.getUserLastTime)
 
 // CHATS ROUTES
+route.get('/chat/:userName', controllers.usersController.getUserData)
 route.get('/chats/:userName',(req, res) => controllers.chatsController.getChats(req, res))
 
 export default route
