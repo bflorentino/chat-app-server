@@ -125,6 +125,24 @@ describe ("User Last Time", ()=>{
     })
 })
 
+describe ("Get User Names and Profile picture", () => {
+    
+    test("Should return an object with user names and profile picture", async () => {
+
+        const response = await api.get("/chat/bflorentino")
+
+        expect(response.status).toBe(200)
+        expect(response.body._data).toHaveProperty("name")
+        expect(response.body._data).toHaveProperty("last_name")
+        expect(response.body._data.profilePic).not.toBe(null)
+    })
+
+    test("Should return an objecto with profilePic null", async () =>{
+        const response = await api.get("/chat/bienvenido")
+        expect(response.body._data.profilePic).toBe(null)
+    })
+})
+
 afterAll(()=> {
     httpServer.close()
 })

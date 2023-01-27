@@ -67,6 +67,15 @@ class SocketManager{
             this.sendSocketMessage(SocketEvents.errorInMessageSend, [userFrom] )
         })
 
+        socket.on(SocketEvents.updateMessage, async (message:Message, chatId:string, userFrom:string, userTo:string) => {
+            
+            const res = await this.chatServices.updateMessage(message, chatId)
+
+            if(res){
+                this.sendSocketMessage(SocketEvents.messagedUpdated, [ userFrom, userTo ], res)
+            }
+        })
+
         socket.on(SocketEvents.disconnect, async () => {
 
             const userOff = Object.keys(this._usersOnline).find(user => this._usersOnline[user] === socket.id )
@@ -83,7 +92,7 @@ class SocketManager{
         this._usersOnline[user] = id
     }
     
-    private setUserOffline = async (user:string) => {
+    private setUserOffline = (user:string) => {
         delete this._usersOnline[user]
     }
 

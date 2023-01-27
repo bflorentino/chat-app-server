@@ -5,7 +5,7 @@ import IChatServices from "./IChatServices";
 import connectToDb from "../../database/connection";
 import DefaultResponses from '../../constants/index'
 import { Chat, Message, MessageRes } from "../../types/interfaces";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import moment from "moment";
 
 class ChatServices implements IChatServices {
@@ -72,6 +72,29 @@ class ChatServices implements IChatServices {
             console.log(e)
         }
         return null
+    }
+
+    public updateMessage = async(newMessage:Message, chatId:string):Promise<MessageRes | null> => {
+
+        try{
+            const _id = new mongoose.Types.ObjectId(chatId)
+            const chatToUpdate = await ChatModel.findById({_id:_id })
+
+            if(!chatToUpdate) return null            
+            
+            chatToUpdate.messages = chatToUpdate.messages.map(mess => 
+                                                                mess.messageId === newMessage.messageId 
+                                                                ? newMessage 
+                                                                : mess
+                                                        )
+            await chatToUpdate.save()
+
+            return {message:newMessage, chatId}
+        }
+        catch(e){
+            console.log(e)
+            return null
+        }
     }
 
     private async createChat(user_1:string, user_2:string):Promise<Types.ObjectId | null>{

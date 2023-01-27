@@ -15,6 +15,7 @@ export const initialUsers = [
         email:"jose@hotmail.com",
         password:"$2a$10$B3Cxvo5855MW92WlqAxhd.I.rKMOrDvEHNyVHBJZO/4AZMPmBp/EG",
         last_active:moment("2023-01-10 09:15:00").format("MMMM DD YYYY, h:mm a"),
+        profilePic:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fes.wikipedia.org%2Fwiki%2FArchivo%3APierre-Person.jpg&psig=AOvVaw0oV8DOk-ZR8EJ__RWe-X4e&ust=1674853558193000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCLiYy-uR5vwCFQAAAAAdAAAAABAE",
         _id:"jose@hotmail.com"
     },
     {
@@ -22,6 +23,7 @@ export const initialUsers = [
         name:"Jose",
         last_name:"Manuel",
         email:"josem@hotmail.com",
+        profilePic: null,
         password:"$2a$10$B3Cxvo5855MW92WlqAxhd.I.rKMOrDvEHNyVHBJZO/4AZMPmBp/EG",
         _id:"josem@hotmail.com"
     },
@@ -30,9 +32,19 @@ export const initialUsers = [
         name:"Bienvenido",
         last_name:"Rodriguez",
         email:"bienvenido@hotmail.com",
+        profilePic:null,
         password:"$2a$10$B3Cxvo5855MW92WlqAxhd.I.rKMOrDvEHNyVHBJZO/4AZMPmBp/EG",
         _id:"bienvenido@hotmail.com"
     }   
+]
+
+export const messagesToUpdate = [
+    {   
+        messageId:"lkajdflajda", 
+        user_from:"bflorentino",
+        content:"Mensaje Editado",
+        was_seen:true
+    }
 ]
 
 export const setDataReady = async() => {
