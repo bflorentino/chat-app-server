@@ -58,6 +58,8 @@ class SocketManager{
 
         socket.on(SocketEvents.sendMessage, async (message:Message, userFrom:string, userTo:string) => {
             
+            console.log(userFrom)
+
             const res = await this.chatServices.addNewMessage(message, userFrom, userTo)
             
             if(res){
@@ -67,9 +69,9 @@ class SocketManager{
             this.sendSocketMessage(SocketEvents.errorInMessageSend, [userFrom] )
         })
 
-        socket.on(SocketEvents.updateMessage, async (message:Message, chatId:string, userFrom:string, userTo:string) => {
+        socket.on(SocketEvents.updateMessage, async (message:Message,userFrom:string, userTo:string, chatId:string, ) => {
             
-            const res = await this.chatServices.updateMessage(message, chatId)
+            const res = await this.chatServices.editMessage(message, chatId, userFrom)
 
             if(res){
                 this.sendSocketMessage(SocketEvents.messagedUpdated, [ userFrom, userTo ], res)

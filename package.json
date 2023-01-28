@@ -6,7 +6,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production ts-node ./src/index.ts",
     "dev": "cross-env NODE_ENV=development nodemon ./src/index.ts",
-    "test": "cross-env NODE_ENV=test jest --verbose --silent --detectOpenHandles .src/services/tests/",
+    "test": "cross-env NODE_ENV=test jest --verbose --silent --detectOpenHandles .src/services/tests/chatServices.test.ts",
     "test:watch": "npm run test -- --watch"
   },
   "author": "Bryan Florentino",

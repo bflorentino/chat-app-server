@@ -4,8 +4,9 @@ import connectToDb from "../../database/connection"
 import UserModel from '../../models/User'
 import ChatModel from "../../models/Chat"
 import moment from "moment"
+import { Chat } from "../../types/interfaces"
 
-export const setApi = () => supertest(application)
+export const Api = supertest(application)
 
 export const initialUsers = [
     {
@@ -38,6 +39,22 @@ export const initialUsers = [
     }   
 ]
 
+export const messagesToSend = [
+    {
+        messageId:"lkajdflajda", 
+        user_from:"bflorentino",    
+        content:"Prueba de mensaje", 
+        was_seen:false
+    },    
+    {
+        messageId:"rljknklolnlnj", 
+        user_from:"bflorentino",  
+        content:"Este es el segundo mensaje enviado al chat", 
+        was_seen:false
+    },
+
+]
+
 export const messagesToUpdate = [
     {   
         messageId:"lkajdflajda", 
@@ -57,4 +74,12 @@ export const setDataReady = async() => {
         const userToSave = new UserModel(user)
         await userToSave.save()
     }
+}
+
+export const getChatId = async():Promise<string> => {
+    
+    const responseChatId = await Api.get("/chats/bflorentino")
+    const chatId:string = Object.values(responseChatId.body._data as Chat[])[0]._id.toString()
+
+    return chatId
 }

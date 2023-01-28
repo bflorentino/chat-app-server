@@ -1,14 +1,20 @@
 import ServerResponse from "../ServerRes";
 import ChatModel from "../../models/Chat";
-import UserModel from "../../models/User";
 import IChatServices from "./IChatServices";
 import connectToDb from "../../database/connection";
 import DefaultResponses from '../../constants/index'
 import { Chat, Message, MessageRes } from "../../types/interfaces";
 import mongoose, { Types } from "mongoose";
 import moment from "moment";
+import { HttpStatus } from "../../types/enums";
+
+module ChatServicesTypes {
+    export type chatDocument = mongoose.Document<unknown, any, Chat> & Chat & Required<{_id: Types.ObjectId}>
+}
 
 class ChatServices implements IChatServices {
+    
+    constructor(){}
 
     public async getChats(userName:string):Promise<ServerResponse>{
 
@@ -74,22 +80,46 @@ class ChatServices implements IChatServices {
         return null
     }
 
-    public updateMessage = async(newMessage:Message, chatId:string):Promise<MessageRes | null> => {
+    public editMessage = async(newMessage:Message, chatId:string, userEditing:string):Promise<MessageRes | null | HttpStatus> => {
+
+        if(!(userEditing === newMessage.user_from)) return HttpStatus.BAD_REQUEST
 
         try{
-            const _id = new mongoose.Types.ObjectId(chatId)
-            const chatToUpdate = await ChatModel.findById({_id:_id })
+            await connectToDb()
 
-            if(!chatToUpdate) return null            
+            const chat = await this.getChatById(chatId)
+            if(!chat) return null       
             
-            chatToUpdate.messages = chatToUpdate.messages.map(mess => 
-                                                                mess.messageId === newMessage.messageId 
-                                                                ? newMessage 
-                                                                : mess
-                                                        )
-            await chatToUpdate.save()
+            chat.messages = chat.messages.map(mess => 
+                                                mess.messageId === newMessage.messageId 
+                                                ? {...mess, ...newMessage} 
+                                                : mess
+                                            )
+            await chat.save()
 
             return {message:newMessage, chatId}
+        }
+        catch(e){
+            console.log(e)
+            return null
+        }
+    }
+
+    public deleteMessage = async (messageToDelete:Message, chatId:string, userDeleting:string):Promise<null | HttpStatus | MessageRes> => {
+
+        if(!(userDeleting === messageToDelete.user_from)) return HttpStatus.BAD_REQUEST
+        
+        try{
+            await connectToDb()
+
+            const chat = await this.getChatById(chatId)
+            if(!chat) return null
+
+            chat.messages = chat.messages.filter(msg => msg.messageId !== messageToDelete.messageId)
+            
+            await chat.save()
+
+            return {message:messageToDelete, chatId}
         }
         catch(e){
             console.log(e)
@@ -114,6 +144,16 @@ class ChatServices implements IChatServices {
         catch(e){
             return null
         }
+    }
+
+    public getChatById = async(chatId:string):Promise<ChatServicesTypes.chatDocument| null> => {
+        
+        const _id = new mongoose.Types.ObjectId(chatId)
+        const chat = await ChatModel.findById({_id})
+        
+        if(!chat) return null
+
+        return chat
     }
 
     private transformArrayToObject = <T>(array:T[], propertyKeySelector:(k:T)=> string) => {
