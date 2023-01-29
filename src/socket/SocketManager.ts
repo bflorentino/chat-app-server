@@ -2,7 +2,7 @@ import { Server as HttpServer } from 'http'
 import { Socket, Server } from "socket.io";
 import ChatServices from '../services/Chats/ChatServices';
 import UsersService from '../services/Users/UsersServices';
-import { SocketEvents } from '../types/enums';
+import { HttpStatus, SocketEvents } from '../types/enums';
 import { Message } from '../types/interfaces';
 
 class SocketManager{
@@ -69,12 +69,20 @@ class SocketManager{
             this.sendSocketMessage(SocketEvents.errorInMessageSend, [userFrom] )
         })
 
-        socket.on(SocketEvents.updateMessage, async (message:Message,userFrom:string, userTo:string, chatId:string, ) => {
+        socket.on(SocketEvents.editMessage, async (message:Message,userFrom:string, userTo:string, chatId:string, ) => {
             
             const res = await this.chatServices.editMessage(message, chatId, userFrom)
 
-            if(res){
-                this.sendSocketMessage(SocketEvents.messagedUpdated, [ userFrom, userTo ], res)
+            if(res && res !== HttpStatus.BAD_REQUEST){
+                this.sendSocketMessage(SocketEvents.messagedEdited, [ userFrom, userTo ], res)
+            }
+        })
+
+        socket.on(SocketEvents.deleteMessage, async(message:Message, userFrom:string, userTo:string, chatId:string) => {
+            const res = await this.chatServices.deleteMessage(message, chatId, userFrom)
+
+            if(res && res !== HttpStatus.BAD_REQUEST){
+                this.sendSocketMessage(SocketEvents.messageDeleted, [ userFrom, userTo ], res)
             }
         })
 
