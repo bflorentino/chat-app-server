@@ -44,13 +44,15 @@ export const messagesToSend = [
         messageId:"lkajdflajda", 
         user_from:"bflorentino",    
         content:"Prueba de mensaje", 
-        was_seen:false
+        was_seen:false,
+        edited:false
     },    
     {
         messageId:"rljknklolnlnj", 
         user_from:"bflorentino",  
         content:"Este es el segundo mensaje enviado al chat", 
-        was_seen:false
+        was_seen:false,
+        edited:false
     },
 
 ]
@@ -60,7 +62,8 @@ export const messagesToUpdate = [
         messageId:"lkajdflajda", 
         user_from:"bflorentino",
         content:"Mensaje Editado",
-        was_seen:true
+        was_seen:false,
+        edited:true
     }
 ]
 

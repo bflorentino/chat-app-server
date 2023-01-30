@@ -1,4 +1,3 @@
-import SocketManager from "../socket/SocketManager"
 import { HttpStatus } from "./enums"
 import { Types } from "mongoose"
 
@@ -21,6 +20,7 @@ export interface Message{
     date?:string,
     content: string,
     was_seen: boolean,
+    edited:boolean
 }
 
 export interface MessageRes {

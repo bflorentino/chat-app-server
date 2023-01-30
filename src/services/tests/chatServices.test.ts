@@ -77,6 +77,37 @@ describe("Edit Message", ()=> {
 
         expect(messageEditRes!.message).toHaveProperty("messageId")
         expect(messageEditRes!.message.content).toBe(messagesToUpdate[0].content)
+        expect(messageEditRes!.message.edited).toBe(true)
+    })
+})
+
+describe("Messages Read Confirmation", ()=> {
+
+    test("Should return null with unexisting or invalid chat Id", async () => {
+        const readResponse = await chatServices.setMessagesRead([], "lakjdfaer")
+        expect(readResponse).toBeNull()
+    })
+
+    test("Should return an empty object if passsed an empty array", async ()=> {
+
+        const chatId = await getChatId()
+        const readResponse = await chatServices.setMessagesRead([], chatId)
+
+        expect(Object.keys(readResponse as Object).length).toBe(0)
+    })
+
+    test("Should return an object with two keys (messagesId) if passed a 2 elements array", async()=> {
+
+        const chatId = await getChatId()
+        const readResponse = await chatServices.setMessagesRead([messagesToSend[0].messageId, messagesToSend[1].messageId], chatId)
+
+        expect(readResponse).not.toBeNull()
+        expect(Object.keys(readResponse as Object).length).toBe(2)
+
+        if(readResponse){
+            expect(readResponse[messagesToSend[0].messageId]).toBe(messagesToSend[0].messageId)
+            expect(readResponse[messagesToSend[1].messageId]).toBe(messagesToSend[1].messageId)
+        }
     })
 })
 

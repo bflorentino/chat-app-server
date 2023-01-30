@@ -12,12 +12,15 @@ const ChatSchema = new Schema<Chat>({
         required: true,
     },
     messages: {
-        type: [{messageId:String,
+        type: [{ 
+                messageId:String,
                 user_from:String, 
                 content: String, 
                 time: String,
                 date: String,
-                was_seen:Boolean}],
+                was_seen:Boolean, 
+                edited:Boolean
+            }],
         
         default : []
     },

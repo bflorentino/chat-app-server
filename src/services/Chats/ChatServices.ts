@@ -10,6 +10,7 @@ import { HttpStatus } from "../../types/enums";
 
 module ChatServicesTypes {
     export type chatDocument = mongoose.Document<unknown, any, Chat> & Chat & Required<{_id: Types.ObjectId}>
+    export type MsgActionResponse = Promise<MessageRes | HttpStatus | null >
 }
 
 class ChatServices implements IChatServices {
@@ -80,9 +81,9 @@ class ChatServices implements IChatServices {
         return null
     }
 
-    public editMessage = async(newMessage:Message, chatId:string, userEditing:string):Promise<MessageRes | null | HttpStatus> => {
+    public editMessage = async(newMsg:Message, chatId:string, userEditing:string):ChatServicesTypes.MsgActionResponse => {
 
-        if(!(userEditing === newMessage.user_from)) return HttpStatus.BAD_REQUEST
+        if(!(userEditing === newMsg.user_from)) return HttpStatus.BAD_REQUEST
 
         try{
             await connectToDb()
@@ -91,13 +92,13 @@ class ChatServices implements IChatServices {
             if(!chat) return null       
             
             chat.messages = chat.messages.map(mess => 
-                                                mess.messageId === newMessage.messageId 
-                                                ? {...mess, ...newMessage} 
+                                                mess.messageId === newMsg.messageId 
+                                                ? {...mess, ...newMsg, edited:true} 
                                                 : mess
                                             )
             await chat.save()
 
-            return {message:newMessage, chatId}
+            return {message:{...newMsg}, chatId}
         }
         catch(e){
             console.log(e)
@@ -105,7 +106,28 @@ class ChatServices implements IChatServices {
         }
     }
 
-    public deleteMessage = async (messageToDelete:Message, chatId:string, userDeleting:string):Promise<null | HttpStatus | MessageRes> => {
+    public setMessagesRead = async(messages:string[], chatId:string):Promise<null| {[m:string]:string} > => {
+        
+        try{
+            await connectToDb()
+
+            const chat = await this.getChatById(chatId)
+            if(!chat) return null  
+
+            const messagesIdObj:{ [s:string] : string } = this.transformArrayToObject(messages, (k) => k)
+            chat.messages = chat.messages.map(msg => messagesIdObj[msg.messageId as string] ? {...msg, was_seen:true} : msg)
+
+            await chat.save()
+
+            return messagesIdObj
+        }
+        catch(e){
+            console.log(e)
+        }
+        return null
+    }
+
+    public deleteMessage = async (messageToDelete:Message, chatId:string, userDeleting:string):ChatServicesTypes.MsgActionResponse => {
 
         if(!(userDeleting === messageToDelete.user_from)) return HttpStatus.BAD_REQUEST
         

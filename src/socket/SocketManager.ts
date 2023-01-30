@@ -58,8 +58,6 @@ class SocketManager{
 
         socket.on(SocketEvents.sendMessage, async (message:Message, userFrom:string, userTo:string) => {
             
-            console.log(userFrom)
-
             const res = await this.chatServices.addNewMessage(message, userFrom, userTo)
             
             if(res){
@@ -69,7 +67,7 @@ class SocketManager{
             this.sendSocketMessage(SocketEvents.errorInMessageSend, [userFrom] )
         })
 
-        socket.on(SocketEvents.editMessage, async (message:Message,userFrom:string, userTo:string, chatId:string, ) => {
+        socket.on(SocketEvents.editMessage, async (message:Message,userFrom:string, userTo:string, chatId:string ) => {
             
             const res = await this.chatServices.editMessage(message, chatId, userFrom)
 
@@ -78,7 +76,17 @@ class SocketManager{
             }
         })
 
+        socket.on(SocketEvents.readMessage, async(messages:string[], userFrom, userTo, chatId:string) => {
+
+            const res = await this.chatServices.setMessagesRead(messages, chatId)
+            
+            if(res){
+                this.sendSocketMessage(SocketEvents.messageRead, [userFrom, userTo], {messagesId:res, chatId} )
+            }
+        })
+
         socket.on(SocketEvents.deleteMessage, async(message:Message, userFrom:string, userTo:string, chatId:string) => {
+
             const res = await this.chatServices.deleteMessage(message, chatId, userFrom)
 
             if(res && res !== HttpStatus.BAD_REQUEST){
