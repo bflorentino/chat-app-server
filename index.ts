@@ -19,6 +19,10 @@ application.use("/", route)
 export const httpServer = http.createServer(application)
 SocketManager.createSocketInstance(httpServer, chatServices, userServices)
 
+application.get("/", (req, res)=> {
+    res.send("HomePage")
+} )
+
 httpServer.listen(variables.port, ()=> {
     console.log(`Server is running in port ${variables.port}`)
 })
