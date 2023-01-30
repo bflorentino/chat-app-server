@@ -1,6 +1,6 @@
 import { chatServices } from "../../types/classes";
 import {Api, setDataReady, messagesToUpdate, messagesToSend, getChatId } from "./helpers";
-import { httpServer } from "../../index";
+import { httpServer } from "../../../index";
 import { Chat, MessageRes} from "../../types/interfaces";
 import { HttpStatus } from "../../types/enums";
 

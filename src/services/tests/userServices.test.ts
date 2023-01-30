@@ -1,4 +1,4 @@
-import { httpServer } from '../../index'
+import { httpServer } from '../../../index'
 import { userServices } from '../../types/classes'
 import { setDataReady, initialUsers } from './helpers'
 import { Api } from './helpers'

@@ -1,10 +1,10 @@
 import Express from 'express'
 import http from 'http'
 import cors from 'cors'
-import SocketManager  from './socket/SocketManager'
-import variables from './config/config'
-import route from './routes'
-import { chatServices, userServices } from './types/classes'
+import SocketManager  from './src/socket/SocketManager'
+import variables from './src/config/config'
+import route from './src/routes'
+import { chatServices, userServices } from './src/types/classes'
 import fileUpload from 'express-fileupload'
 
 export const application = Express()

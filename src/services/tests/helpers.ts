@@ -1,4 +1,4 @@
-import { application } from "../../index"
+import { application } from "../../../index"
 import supertest from "supertest"
 import connectToDb from "../../database/connection"
 import UserModel from '../../models/User'

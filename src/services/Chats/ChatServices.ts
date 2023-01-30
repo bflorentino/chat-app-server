@@ -60,7 +60,7 @@ class ChatServices implements IChatServices {
             }
             
             // Update chat with sent message
-            const messageToAdd = {...message, date:moment().format('M/D/YYYY'), time:moment().format('h:mm a')}
+            const messageToAdd = {...message, date:moment().format('M/D/YYYY'), time:moment().format('h:mm:ss a')}
 
             await ChatModel.updateOne({_id: chatId}, 
                                     {$push:{messages:[messageToAdd]}
